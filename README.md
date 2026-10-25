@@ -21,7 +21,23 @@ ONEBRIDGE is a community problem-reporting and resolution-tracking demo. Residen
 ## Requirements
 
 - Python 3.10 or newer (tested with Python 3.13).
-- No package installation or Node.js is required.
+- No third-party package installation, Node.js, or Docker is required. See [requirements.txt](requirements.txt).
+
+## Project structure
+
+```text
+ONEBRIDGE/
+├── server.py              # Python HTTP server, JSON API, and SQLite workflow
+├── web/                   # Responsive HTML, CSS, and JavaScript frontend
+├── tests/                 # Unit and API workflow tests
+├── docs/                  # Architecture, data model, and integration boundaries
+├── data/                  # Generated local SQLite data (not committed)
+├── .env.example           # Placeholder configuration reference
+├── .gitignore
+├── LICENSE
+├── README.md
+└── requirements.txt       # Documents standard-library-only dependencies
+```
 
 ## Run locally
 
@@ -66,7 +82,7 @@ python -m unittest discover -s tests -v
 Run Python syntax checks:
 
 ```powershell
-python -m py_compile server.py tests\test_server.py
+python -m py_compile server.py tests\test_server.py tests\test_workflow.py
 ```
 
 ## Workflow walkthrough
@@ -86,6 +102,22 @@ No agency is contacted. Assignment and notification actions only update this app
 
 Image evidence uploads, password reset, multilingual/voice input, Azure AI Vision, Azure Maps, Blob Storage, PostgreSQL, Prisma migrations, email, and deployment are not implemented. Do not put secrets into the frontend or commit them to source control.
 
+### TrustShield verification
+
+The current TrustShield demo reports four explainable completeness signals: a description was provided, a supported category was selected, a location was described, and an optional evidence note was provided. These are **not AI predictions, proof that an issue is genuine, or a fraud score**. An authorized person makes review decisions, provides a note, and can request additional evidence or escalate uncertainty for human review.
+
+### Microsoft Azure integration plan
+
+Azure is a future integration plan, not an implemented dependency. The `.env.example` values alone do not activate an Azure service. A production integration should be introduced as an explicitly configured provider with a clearly labeled local fallback:
+
+1. **Azure AI Foundry:** optional, human-reviewed category and routing suggestions, with the factors behind recommendations explained.
+2. **Azure AI Vision:** optional image relevance signals for an uploaded report. Never treat image analysis as proof of authenticity or completed work.
+3. **Azure Maps:** optional geocoding and map display, with approximate public locations and access-controlled precise coordinates.
+4. **Azure AI Speech and Translator:** optional English, Hindi, and Kannada input and translation, with the original report retained for review.
+5. **Azure Blob Storage:** private evidence storage with strict upload validation, short-lived access, and a documented retention policy.
+
+Any implementation must keep credentials server-side, prefer managed identities, document data handling and costs, and make unavailable integrations visible instead of pretending a service ran.
+
 ## Security and privacy notes
 
 - Passwords use Python's built-in scrypt key derivation function with a random salt.
@@ -96,6 +128,34 @@ Image evidence uploads, password reset, multilingual/voice input, Azure AI Visio
 - The demo does not accept or persist uploaded files.
 
 See [Architecture and limitations](docs/architecture.md) for the data model and implementation boundaries.
+
+## GitHub setup and future updates
+
+This project is maintained in the public [ONEBRIDGE GitHub repository](https://github.com/harshavardhanrj230407-cmyk/ONEBRIDGE). Its configured `origin` should point to that repository. Check the repository root and working tree before making changes or pushing:
+
+```powershell
+git rev-parse --show-toplevel
+git status --short --branch
+git remote -v
+```
+
+Configure the author identity for this repository if needed:
+
+```powershell
+git config user.name "R J Harsha Vardhan"
+git config user.email "harshavardhanrj230407@gmail.com"
+```
+
+Push future updates from the ONEBRIDGE folder only:
+
+```powershell
+git add README.md docs server.py tests web
+git diff --cached --check
+git commit -m "Describe the ONEBRIDGE update"
+git push origin main
+```
+
+Review staged changes and never force-push. Do not stage local databases, `.env` files, or real user evidence.
 
 ## Project
 

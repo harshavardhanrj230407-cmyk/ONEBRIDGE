@@ -1,0 +1,2 @@
+# ONEBRIDGE uses only Python's standard library.
+# No third-party Python packages are required.
