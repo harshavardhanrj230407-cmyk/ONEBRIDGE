@@ -149,7 +149,7 @@ git config user.email "harshavardhanrj230407@gmail.com"
 Push future updates from the ONEBRIDGE folder only:
 
 ```powershell
-git add README.md docs server.py tests web
+git add .gitignore .env.example LICENSE README.md docs requirements.txt server.py tests web
 git diff --cached --check
 git commit -m "Describe the ONEBRIDGE update"
 git push origin main
