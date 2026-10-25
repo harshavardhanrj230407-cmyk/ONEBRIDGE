@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101c2f">
+  <meta name="description" content="ONEBRIDGE helps communities report local problems, track transparent reviews, and confirm real-world resolutions.">
+  <title>ONEBRIDGE — Every Problem Deserves a Solution</title>
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="/landing.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <a class="brand" href="/" aria-label="ONEBRIDGE home">
+        <span class="brand-mark" aria-hidden="true"><span></span><span></span><span></span></span>
+        <span class="brand-name">onebridge<span class="brand-period">.</span><small>COMMUNITY, CONNECTED</small></span>
+      </a>
+      <div class="side-caption">WORKSPACE</div>
+      <nav class="side-nav" aria-label="Main navigation" id="navigation">
+        <button class="nav-link active" data-view="overview"><span class="nav-icon" aria-hidden="true">⌂</span>Overview</button>
+        <button class="nav-link" data-view="reports"><span class="nav-icon" aria-hidden="true">▤</span>My reports<span class="nav-count" id="report-count">0</span></button>
+        <button class="nav-link" data-view="map"><span class="nav-icon" aria-hidden="true">◎</span>Community map</button>
+        <button class="nav-link" data-view="notifications"><span class="nav-icon" aria-hidden="true">♧</span>Notifications<span class="nav-dot" id="notification-dot" hidden></span></button>
+        <button class="nav-link admin-link" data-view="admin" hidden><span class="nav-icon" aria-hidden="true">▦</span>Operations</button>
+      </nav>
+      <div class="sidebar-bottom">
+        <div class="help-card"><span class="help-sparkle">✳</span><b>Building better, together.</b><p>Every clear report helps your community move forward.</p><a href="#how-it-works">How it works <span aria-hidden="true">↗</span></a></div>
+        <div class="profile-row" id="profile-row" hidden>
+          <div class="avatar" id="profile-avatar">O</div><div class="profile-copy"><b id="profile-name">Guest</b><span id="profile-role">Community member</span></div>
+          <button class="icon-button logout-button" id="logout-button" aria-label="Sign out" title="Sign out">↗</button>
+        </div>
+        <div class="demo-label"><span class="demo-dot"></span>LOCAL DEMO MODE</div>
+      </div>
+    </aside>
+
+    <main class="main-area">
+      <header class="topbar">
+        <button class="icon-button mobile-menu" id="mobile-menu" aria-label="Toggle navigation">☰</button>
+        <div class="breadcrumbs"><span>Workspace</span><span class="crumb-separator">/</span><b id="breadcrumb-current">Overview</b></div>
+        <div class="topbar-actions"><span class="status-pill"><span class="status-dot"></span>All systems operational</span><button class="top-avatar" id="top-avatar" aria-label="Your profile">G</button></div>
+      </header>
+      <div class="page-content" id="page-content">
+        <section class="loading-state"><div class="loader"></div><p>Getting your workspace ready…</p></section>
+      </div>
+      <footer class="page-footer"><span>© 2026 ONEBRIDGE · Built for stronger communities</span><span><i class="privacy-dot"></i> Privacy-conscious by design</span></footer>
+    </main>
+  </div>
+  <div class="toast-region" id="toast-region" role="status" aria-live="polite"></div>
+  <dialog class="detail-dialog" id="detail-dialog" aria-labelledby="detail-title"><div id="detail-content"></div></dialog>
+</body>
+</html>
