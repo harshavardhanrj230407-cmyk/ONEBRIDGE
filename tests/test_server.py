@@ -1,6 +1,34 @@
 import unittest
+from unittest.mock import patch
 
 import server
+
+
+class ConfigurationTests(unittest.TestCase):
+    def test_server_address_uses_platform_port_and_bind_address(self):
+        with patch.dict(server.os.environ, {"PORT": "8080"}, clear=True):
+            self.assertEqual(server.server_address(), ("0.0.0.0", 8080))
+
+        with patch.dict(server.os.environ, {
+            "PORT": "8080",
+            "ONEBRIDGE_HOST": "127.0.0.1",
+            "ONEBRIDGE_PORT": "9000",
+        }, clear=True):
+            self.assertEqual(server.server_address(), ("127.0.0.1", 9000))
+
+        with patch.dict(server.os.environ, {}, clear=True):
+            self.assertEqual(server.server_address(), ("127.0.0.1", 8000))
+
+    def test_session_cookie_secure_flag_is_configurable(self):
+        with patch.object(server, "SECURE_COOKIE", False):
+            cookie = server.session_cookie("test-token", 60)
+        self.assertIn("HttpOnly", cookie)
+        self.assertIn("SameSite=Strict", cookie)
+        self.assertNotIn("; Secure", cookie)
+
+        with patch.object(server, "SECURE_COOKIE", True):
+            cookie = server.session_cookie("test-token", 60)
+        self.assertIn("; Secure", cookie)
 
 
 class PasswordTests(unittest.TestCase):

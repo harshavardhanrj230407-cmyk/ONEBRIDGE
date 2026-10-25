@@ -49,3 +49,13 @@ This is a local demo, not a production deployment:
 - No secure remote deployment, HTTPS termination, CSRF-token framework, hardened abuse controls, or production operational monitoring.
 
 Do not expose this demo server to untrusted networks or use real citizen information.
+
+### Azure App Service preview configuration
+
+The server can bind to the App Service-provided `PORT` when that variable is set. For an HTTPS-terminated, demo-only preview, configure these App Service settings:
+
+- `ONEBRIDGE_SECURE_COOKIE=true`
+- `ONEBRIDGE_DATABASE=/home/data/onebridge.sqlite3`
+- `SCM_DO_BUILD_DURING_DEPLOYMENT=true`
+
+Use `python server.py` as the startup command, enable HTTPS-only traffic, and ensure App Service persistent `/home` storage is enabled. `ONEBRIDGE_HOST` and `ONEBRIDGE_PORT` can override platform defaults if needed. Keep only fictional demo data in this instance. The known demo credentials are public, account registration is open, and this configuration does not make the application suitable for real personal information or production use.

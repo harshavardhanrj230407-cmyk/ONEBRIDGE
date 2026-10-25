@@ -129,6 +129,10 @@ Any implementation must keep credentials server-side, prefer managed identities,
 
 See [Architecture and limitations](docs/architecture.md) for the data model and implementation boundaries.
 
+### Azure App Service demo preview
+
+The application is not production-ready. For a temporary public hackathon preview, use fictional data only, keep HTTPS-only traffic enabled, and configure `ONEBRIDGE_SECURE_COOKIE=true` and `ONEBRIDGE_DATABASE=/home/data/onebridge.sqlite3` in App Service. The app reads the platform `PORT` and binds to `0.0.0.0` when it is supplied. Set the startup command to `python server.py` and enable persistent `/home` storage so the SQLite database survives restarts. Do not reuse demo credentials or collect real personal information. See [Azure preview limitations](docs/architecture.md#azure-app-service-preview-configuration).
+
 ## GitHub setup and future updates
 
 This project is maintained in the public [ONEBRIDGE GitHub repository](https://github.com/harshavardhanrj230407-cmyk/ONEBRIDGE). Its configured `origin` should point to that repository. Check the repository root and working tree before making changes or pushing:

@@ -23,6 +23,7 @@ ROOT = Path(__file__).resolve().parent
 WEB_ROOT = ROOT / "web"
 DB_PATH = Path(os.environ.get("ONEBRIDGE_DATABASE", ROOT / "data" / "onebridge.sqlite3"))
 SESSION_HOURS = max(1, int(os.environ.get("ONEBRIDGE_SESSION_HOURS", "12")))
+SECURE_COOKIE = os.environ.get("ONEBRIDGE_SECURE_COOKIE", "").lower() in {"1", "true", "yes"}
 MAX_BODY = 1_000_000
 MAX_REPORTS_PER_HOUR = 8
 ROLES = {"citizen", "resolver", "organization_admin", "platform_admin"}
@@ -64,6 +65,21 @@ STATUS_LABELS = {
 }
 rate_lock = threading.Lock()
 auth_attempts: dict[str, list[float]] = {}
+
+
+def server_address() -> tuple[str, int]:
+    port = int(os.environ.get("ONEBRIDGE_PORT", os.environ.get("PORT", "8000")))
+    host = os.environ.get("ONEBRIDGE_HOST")
+    if host is None:
+        host = "0.0.0.0" if "PORT" in os.environ else "127.0.0.1"
+    return host, port
+
+
+def session_cookie(value: str, max_age: int) -> str:
+    cookie = f"onebridge_session={value}; Path=/; HttpOnly; SameSite=Strict; Max-Age={max_age}"
+    if SECURE_COOKIE:
+        cookie += "; Secure"
+    return cookie
 
 
 def now() -> str:
@@ -519,7 +535,7 @@ class Handler(BaseHTTPRequestHandler):
             morsel = cookie.get("onebridge_session")
             if morsel:
                 db.execute("DELETE FROM sessions WHERE token_hash=?", (hashlib.sha256(morsel.value.encode()).hexdigest(),))
-            self.send_json(200, {"ok": True}, {"Set-Cookie": "onebridge_session=; Path=/; HttpOnly; SameSite=Strict; Max-Age=0"})
+            self.send_json(200, {"ok": True}, {"Set-Cookie": session_cookie("", 0)})
             return
         user = self.current_user(db)
         if route == "/api/reports":
@@ -651,7 +667,7 @@ class Handler(BaseHTTPRequestHandler):
         db.execute("INSERT INTO sessions (token_hash,user_id,expires_at,created_at) VALUES (?,?,?,?)",
                    (hashlib.sha256(raw.encode()).hexdigest(), user["id"], expiry, now()))
         self.send_json(200, {"user": public_user(user)}, {
-            "Set-Cookie": f"onebridge_session={raw}; Path=/; HttpOnly; SameSite=Strict; Max-Age={SESSION_HOURS * 3600}"
+            "Set-Cookie": session_cookie(raw, SESSION_HOURS * 3600)
         })
 
     @staticmethod
@@ -707,8 +723,7 @@ def main() -> None:
         print("Resolver: resolver@onebridge.local / ResolverDemo!2026")
         print("Admin: admin@onebridge.local / AdminDemo!2026")
         return
-    host = os.environ.get("ONEBRIDGE_HOST", "127.0.0.1")
-    port = int(os.environ.get("ONEBRIDGE_PORT", "8000"))
+    host, port = server_address()
     server = ThreadingHTTPServer((host, port), Handler)
     print(f"ONEBRIDGE local demo running at http://{host}:{port}")
     print("Press Ctrl+C to stop. This demo uses SQLite and rules-based TrustShield signals.")
